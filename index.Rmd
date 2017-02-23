@@ -1,0 +1,152 @@
+---
+title: "Scott Pruitt's Emails!"
+output: html_document
+---
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning= FALSE)
+```
+
+
+
+
+
+
+
+```{r include = FALSE}
+library(tm)
+library(knitr)
+library(dplyr)
+library(RColorBrewer)
+setwd("C:\\Users\\owner\\Desktop\\PruittEmails")
+
+dest <- "C:\\Users\\owner\\Desktop\\PruittEmails"
+myfiles <- list.files(path = dest, pattern = "pdf",  full.names = TRUE)
+lapply(myfiles, function(i) system(paste('"C:/Users/owner/Desktop/pdftotext.exe"', paste0('"', i, '"')), wait = FALSE) )
+dest <- "C:\\Users\\owner\\Desktop\\PruittEmails"
+mytxtfiles <- list.files(path = dest, pattern = "txt",  full.names = TRUE)
+
+
+#Word Cloud*************************************************
+mycorpus <- Corpus(DirSource(dest, pattern = "txt"))
+mycorpus <- tm_map(mycorpus,  removeNumbers)
+mycorpus <- tm_map(mycorpus,  removePunctuation)
+mycorpus <- tm_map(mycorpus,  stripWhitespace)
+#mycorpus <- tm_map(mycorpus,  tolower)
+
+mydtm <- DocumentTermMatrix(mycorpus)
+
+# remove some OCR weirdness
+# words with more than 2 consecutive characters
+mydtm <- mydtm[,!grepl("(.)\\1{2,}", mydtm$dimnames$Terms)]
+#freq <- colSums(as.matrix(mydtm))   
+#length(freq) 
+#ord <- order(freq) 
+
+m <- as.matrix(mydtm)   
+dim(m)   
+m2 <- t(m)
+write.csv(m2, file="dtm2.csv")   
+pal2 <- brewer.pal(8,"Dark2")
+library("wordcloud")
+
+mycorpus2 <- tm_map(mycorpus, removeWords, stopwords('english'))
+mycorpus3 <- tm_map(mycorpus2, removeWords, c("sent", "email", "from", "date",
+                                              "the", "will", "this", "and",
+                                             "are", "may", "use", "safeunsubscribetm",
+                                             "with", "that", "our", "would", 
+                                             "profilemailscott", "melissahoustonoagokgov",
+                                             "ashleyolmsteadoagokgov", "reply", "any", "can",
+                                             "your", "have", "Sent", "click", "This",
+                                             "Reply", "Forward", "foward", "safeunsubscribeTM", "subject", "Subject", "Feb", "feb", "address", "attachments", "nicolekingoagokgov", "From", "from", "Address", "date", "The", "Date"))
+
+
+
+#************************Email addresses******************
+library(data.table)
+library(xtable)
+mycorpusE <- Corpus(DirSource(dest, pattern = "txt"))
+
+#mycorpus <- tm_map(mycorpus,  removeNumbers)
+#mycorpusE <- tm_map(mycorpusE,  removePunctuation)
+mycorpusE <- tm_map(mycorpusE,  stripWhitespace)
+#mycorpus <- tm_map(mycorpus,  tolower)
+
+mydtmE <- DocumentTermMatrix(mycorpusE)
+
+# remove some OCR weirdness
+# words with more than 2 consecutive characters
+mydtmE <- mydtmE[,!grepl("(.)\\1{2,}", mydtmE$dimnames$Terms)]
+#freq <- colSums(as.matrix(mydtmE))   
+#length(freq) 
+#ord <- order(freq) 
+
+mE <- as.matrix(mydtmE)   
+dim(mE)   
+mE2 <- t(mE)
+#write.csv(mE2, file="dtmE2.csv")   
+
+x <- subset(mE[, grepl("@", mydtmE$dimnames$Terms)])
+x2 <- t(x)
+x2 <- as.data.frame(x2)
+x2$Total <- x2$'Produce-1600-2541-Redacted.txt' +	
+  x2$'Produce-2000.txt'	 +	
+  x2$'Produce-3000.txt'	 +	
+  x2$'Produce-4000.txt'	 +	
+  x2$'Produce-6000.txt'	 +	
+  x2$'Produce-5000.txt'	 +	
+  x2$'Produce-Box-1-Redacted.txt'	 +	
+  x2$'Produce-Box-5-Redacted.txt'	 +	
+  x2$'Produce-Box-5.txt'	 +	
+  x2$'Produce-Box-6.txt'
+
+#write.csv(x2, file = "Email_addresses.csv")
+x3 <- read.csv(file = "Email_addresses.csv")
+
+colnames(x3)[colnames(x3)=="total"] <- "Total"
+
+x4 <- as.data.table(x3)
+
+x5 <- x4[order(-x4$Total), ]
+x6 <- filter(x5, Total >= 10)
+
+#I tried changing column names in R, but I couldn't get it to work right so I just did it in Excel after outputting x3.
+
+#colnames(x5)[colnames(x5)=="Produce-1600-2541-Redacted.txt"] <- "1600-2541-Redacted"
+#colnames(x5)[colnames(x5)=="Produce-2000.txt"] <- "2000"
+#colnames(x5)[colnames(x5)=="Produce-3000.txt"] <- "3000"
+#colnames(x5)[colnames(x5)=="Produce-4000.txt"] <- "4000"
+#colnames(x5)[colnames(x5)=="Produce-6000.txt"] <- "6000"
+#colnames(x5)[colnames(x5)=="Produce-Box-1-Redacted.txt"] <- "Box 1 Redacted"
+#colnames(x5)[colnames(x5)=="Produce-Box-5-Redacted.txt"] <- "Box 5 Redacted"
+#colnames(x5)[colnames(x5)=="Produce-Box-6.txt"] <- "Box 6"
+#colnames(x5)[colnames(x5)=="total"] <- "Total Count"
+
+
+									
+#Words removed: sent, email, from, date, the, will, this, and, are, may, use, safeunsubscribetm, with, that, our, would, profilemailscott, melissahoustonoagokgov, reply, any, can, your, have, click, reply, forward, subject, Feb, address, attachments, nicolekingoagokgov, from, date. 
+
+
+```
+
+
+##Wordcloud of 200 highest frequency words:
+
+
+```{r fig.show = 'hold',   echo = FALSE}
+
+wordcloud(mycorpus3, max.words = 200, random.order = FALSE, colors = pal2)
+
+```
+
+
+##E-mail addresses in files: frequency count
+There were a total of 7,548 e-mail addresses returned with a total of 62,812 instances found.  Some e-mail addresses may be in the list more than once, because of punctuation differences surrounding the e-mail address.  Example "email@blank.gov" and "<email@blank.gov>".  Whether or not these are being sent or received is also not tallied.  The analysis only counts how many times "@" is found in a string. Find this full list in the E-mails repository  of my GitHub site [here](https://github.com/RealLifeData).
+
+The list you see below was limited to e-mail addresses that occurred 10 or more times. 
+
+```{r fig.show = 'hold',   echo = FALSE}
+kable(x6)
+
+```
+
