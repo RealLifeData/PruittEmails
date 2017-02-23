@@ -109,7 +109,7 @@ x4 <- as.data.table(x3)
 
 x5 <- x4[order(-x4$Total), ]
 x6 <- filter(x5, Total >= 10)
-
+x7 <- x6[,c(1,12, 2:11) ]
 #I tried changing column names in R, but I couldn't get it to work right so I just did it in Excel after outputting x3.
 
 #colnames(x5)[colnames(x5)=="Produce-1600-2541-Redacted.txt"] <- "1600-2541-Redacted"
@@ -132,6 +132,7 @@ x6 <- filter(x5, Total >= 10)
 
 ##Wordcloud of 200 highest frequency words:
 
+Common stop words and some common words related to e-mail use (e.g. "sent") were removed. 
 
 ```{r fig.show = 'hold',   echo = FALSE}
 
@@ -141,12 +142,12 @@ wordcloud(mycorpus3, max.words = 200, random.order = FALSE, colors = pal2)
 
 
 ##E-mail addresses in files: frequency count
-There were a total of 7,548 e-mail addresses returned with a total of 62,812 instances found.  Some e-mail addresses may be in the list more than once, because of punctuation differences surrounding the e-mail address.  Example "email@blank.gov" and "<email@blank.gov>".  Whether or not these are being sent or received is also not tallied.  The analysis only counts how many times "@" is found in a string. Find this full list in the E-mails repository  of my GitHub site [here](https://github.com/RealLifeData).
+There were a total of 7,548 e-mail addresses returned with a total of 62,812 instances found.  Some e-mail addresses may be in the list more than once, because of punctuation differences surrounding the e-mail address.  Example "email@blank.gov" and "<email@blank.gov>".  Whether or not these are being sent or received is also not tallied.  The analysis only counts how many times "@" is found in a string. Find this full list in the E-mails repository  of my GitHub site [here](https://github.com/RealLifeData). 
 
 The list you see below was limited to e-mail addresses that occurred 10 or more times. 
 
 ```{r fig.show = 'hold',   echo = FALSE}
-kable(x6)
+kable(x7)
 
 ```
 
