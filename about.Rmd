@@ -9,5 +9,7 @@ The data for this report can be found [here](http://www.exposedbycmd.org/Scott-P
 
 All R code for this and other projects can be found on my [GitHub](https://github.com/RealLifeData) site. 
 
+The PDFs are not on my GitHub site because they are too large to house in the repository.  If you want to analyze them using R, then you must down them yourselves [here](http://www.exposedbycmd.org/Scott-Pruitt-Missing-Emails) and put them into your own working directory. 
+
 
 
