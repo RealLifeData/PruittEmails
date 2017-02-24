@@ -46,21 +46,21 @@ mydtm <- mydtm[,!grepl("(.)\\1{2,}", mydtm$dimnames$Terms)]
 m <- as.matrix(mydtm)   
 dim(m)   
 m2 <- t(m)
-write.csv(m2, file="dtm2.csv")   
-pal2 <- brewer.pal(8,"Dark2")
-library("wordcloud")
+write.csv(m2, file="dtm3.csv")   
 
-mycorpus2 <- tm_map(mycorpus, removeWords, stopwords('english'))
+mycorpus2 <- tm_map(mycorpus,  content_transformer(tolower))
+mycorpus2 <- tm_map(mycorpus2, removeWords, stopwords('english'))
 mycorpus3 <- tm_map(mycorpus2, removeWords, c("sent", "email", "from", "date",
                                               "the", "will", "this", "and",
                                              "are", "may", "use", "safeunsubscribetm",
                                              "with", "that", "our", "would", 
-                                             "profilemailscott", "melissahoustonoagokgov",
-                                             "ashleyolmsteadoagokgov", "reply", "any", "can",
-                                             "your", "have", "Sent", "click", "This",
-                                             "Reply", "Forward", "foward", "safeunsubscribeTM", "subject", "Subject", "Feb", "feb", "address", "attachments", "nicolekingoagokgov", "From", "from", "Address", "date", "The", "Date"))
+                                             "profilemailscott",
+  "reply", "any", "can",
+                                             "your", "have",  "click",                                               "safeunsubscribetm", "subject",   "feb", "address", "attachments", "from", "message", "communication", "recipient", "del", "click", "ocpa", "just", "pud" , "profile", "email", "ocpas", "oklahoma", "forward", "reply", "blvd", "intended", "want", "fax"))
 
 
+pal2 <- brewer.pal(8,"Dark2")
+library("wordcloud")
 
 #************************Email addresses******************
 library(data.table)
@@ -142,7 +142,7 @@ wordcloud(mycorpus3, max.words = 200, random.order = FALSE, colors = pal2)
 
 
 ##E-mail addresses in files: frequency count
-There were a total of 7,548 e-mail addresses returned with a total of 62,812 instances found.  Some e-mail addresses may be in the list more than once, because of punctuation differences surrounding the e-mail address.  Example "email@blank.gov" and "<email@blank.gov>".  Whether or not these are being sent or received is also not tallied.  The analysis only counts how many times "@" is found in a string. Find this full list in the E-mails repository  of my GitHub site [here](https://github.com/RealLifeData).
+There were a total of 7,548 e-mail addresses returned with a total of 62,812 instances found.  Some e-mail addresses may be in the list more than once, because of punctuation differences surrounding the e-mail address.  Example "email@blank.gov" and "<email@blank.gov>".  Whether or not these are being sent or received is also not tallied.  The analysis only counts how many times "@" is found in a string. Find this full list in the E-mails repository  of my GitHub site [here](https://github.com/RealLifeData). There is also a document that contains a frequency table for all of the words found in the files. 
 
 The list you see below was limited to e-mail addresses that occurred 10 or more times. 
 
